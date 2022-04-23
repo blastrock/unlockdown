@@ -33,9 +33,8 @@ dkmsUninstall:
 	sudo dkms remove -m $(MODULE) -v $(VERSION) --all || true
 	sudo rm -fr $(DKMS_PATH)
 
-dkmsInstall: all
+dkmsInstall: dkmsUninstall
 	sudo mkdir -p $(DKMS_PATH)
-	sudo cp Kbuild dkms.conf Makefile *.c $(DKMS_PATH)
-	sudo dkms remove -m $(MODULE) -v $(VERSION) --all || true
+	sudo cp Kbuild dkms.conf Makefile mod.c $(DKMS_PATH)
 	sudo dkms add -m $(MODULE) -v $(VERSION)
 	sudo dkms install $(MODULE)/$(VERSION)
