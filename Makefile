@@ -1,5 +1,6 @@
 MAKEFILE_DIR:=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
-KDIR ?= /usr/src/linux-headers-$(shell uname -r)/
+MDIR ?= /lib/modules/$(shell uname -r)
+KDIR ?= $(MDIR)/build
 MODULE = unlockdown
 MODULE_OBJ = $(MODULE).ko
 VERSION = 0.01
@@ -14,7 +15,7 @@ clean:
 	$(MAKE) -C $(KDIR) M=$(MAKEFILE_DIR) clean
 
 sign: all
-	sudo /lib/modules/`uname -r`/source/scripts/sign-file sha256 \
+	sudo $(MDIR)/source/scripts/sign-file sha256 \
 		/root/dkms.key /root/dkms.der ${MODULE_OBJ}
 
 rmmod:
@@ -27,7 +28,7 @@ install:
 	$(MAKE) -C $(KDIR) M=$(MAKEFILE_DIR) modules_install
 
 quickInstall:
-	cp $(MODULE_OBJ) /lib/modules/`uname -r`/extra
+	cp $(MODULE_OBJ) $(MDIR)/extra
 
 dkmsUninstall:
 	sudo dkms remove -m $(MODULE) -v $(VERSION) --all || true
